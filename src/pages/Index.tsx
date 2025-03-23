@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import PipelineGraph from '@/components/PipelineGraph';
@@ -17,6 +18,7 @@ const Index = () => {
   const [analysisMode, setAnalysisMode] = useState<'none' | 'criticalPath' | 'bottlenecks' | 'resources'>('none');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   // Simulate loading pipeline data
   const loadPipelineData = () => {
@@ -107,17 +109,24 @@ const Index = () => {
     }
   };
   
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+  
   // Initial data load
   useEffect(() => {
     loadPipelineData();
   }, []);
   
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
       <Sidebar 
         onAnalyze={handleAnalysis}
         selectedNodeId={selectedNodeId}
         selectedNodeData={selectedNodeData}
+        onToggleDarkMode={toggleDarkMode}
+        darkMode={theme === 'dark'}
       />
       
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -128,10 +137,10 @@ const Index = () => {
         
         <main className="flex-1 overflow-hidden relative">
           {loading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80 z-10">
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-gray-600">Loading pipeline data...</p>
+                <p className="mt-4 text-gray-600 dark:text-gray-300">Loading pipeline data...</p>
               </div>
             </div>
           ) : (

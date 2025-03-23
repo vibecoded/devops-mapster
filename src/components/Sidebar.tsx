@@ -9,11 +9,14 @@ import {
   Clock,
   Network,
   ArrowRightLeft,
-  Search
+  Search,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 import {
   Accordion,
@@ -29,15 +32,21 @@ interface SidebarProps {
   onAnalyze?: (type: string) => void;
   selectedNodeId?: string | null;
   selectedNodeData?: any;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
   className,
   onAnalyze,
   selectedNodeId,
-  selectedNodeData
+  selectedNodeData,
+  darkMode = false,
+  onToggleDarkMode
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -59,17 +68,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div 
       className={cn(
-        'w-[280px] border-r flex flex-col h-screen bg-gray-50',
+        'w-[280px] border-r flex flex-col h-screen bg-gray-50 dark:bg-gray-900 dark:border-gray-800',
         className
       )}
     >
       <div className="p-4">
         <div className="relative">
-          <Search className="h-4 w-4 absolute left-2.5 top-2.5 text-gray-500" />
+          <Search className="h-4 w-4 absolute left-2.5 top-2.5 text-gray-500 dark:text-gray-400" />
           <Input
             type="search"
             placeholder="Search pipelines..."
-            className="pl-9"
+            className="pl-9 dark:bg-gray-800 dark:border-gray-700"
             value={searchTerm}
             onChange={handleSearch}
           />
@@ -79,50 +88,50 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-grow overflow-y-auto">
         <div className="px-3">
           <div className="py-2">
-            <h3 className="text-xs font-medium text-gray-500 px-3 mb-2">ANALYSIS</h3>
+            <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 mb-2">ANALYSIS</h3>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="w-full justify-start text-gray-700 mb-1"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 mb-1 hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => onAnalyze?.('criticalPath')}
             >
-              <ArrowRightLeft className="h-4 w-4 mr-2 text-amber-500" />
+              <ArrowRightLeft className="h-4 w-4 mr-2 text-amber-500 dark:text-amber-400" />
               Highlight Critical Path
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="w-full justify-start text-gray-700 mb-1"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 mb-1 hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => onAnalyze?.('bottlenecks')}
             >
-              <AlertCircle className="h-4 w-4 mr-2 text-rose-500" />
+              <AlertCircle className="h-4 w-4 mr-2 text-rose-500 dark:text-rose-400" />
               Show Bottlenecks
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="w-full justify-start text-gray-700 mb-1"
+              className="w-full justify-start text-gray-700 dark:text-gray-300 mb-1 hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => onAnalyze?.('resources')}
             >
-              <Network className="h-4 w-4 mr-2 text-blue-500" />
+              <Network className="h-4 w-4 mr-2 text-blue-500 dark:text-blue-400" />
               Resource Utilization
             </Button>
           </div>
           
-          <Separator className="my-2" />
+          <Separator className="my-2 dark:bg-gray-800" />
           
           <Accordion type="single" collapsible defaultValue="filters">
             <AccordionItem value="filters" className="border-none">
               <AccordionTrigger className="py-2 hover:no-underline">
                 <div className="flex items-center">
-                  <Layers className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Filters</span>
+                  <Layers className="h-4 w-4 mr-2 dark:text-gray-300" />
+                  <span className="text-sm font-medium dark:text-gray-300">Filters</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3 pt-1 pb-2">
                   <div>
-                    <h4 className="text-xs font-medium text-gray-500 mb-2 px-1">Status</h4>
+                    <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-1">Status</h4>
                     <div className="flex flex-wrap gap-1">
                       {filters.status.map((status) => (
                         <StatusBadge 
@@ -135,19 +144,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                   
                   <div>
-                    <h4 className="text-xs font-medium text-gray-500 mb-2 px-1">Type</h4>
+                    <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-1">Type</h4>
                     <div className="space-y-1">
                       {filters.type.map((type) => (
                         <div key={type} className="flex items-center">
                           <input
                             type="checkbox"
                             id={`type-${type}`}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
                             defaultChecked
                           />
                           <label
                             htmlFor={`type-${type}`}
-                            className="ml-2 text-sm text-gray-700 capitalize"
+                            className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize"
                           >
                             {type}
                           </label>
@@ -162,8 +171,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             <AccordionItem value="systems" className="border-none">
               <AccordionTrigger className="py-2 hover:no-underline">
                 <div className="flex items-center">
-                  <GitBranch className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">CI/CD Systems</span>
+                  <GitBranch className="h-4 w-4 mr-2 dark:text-gray-300" />
+                  <span className="text-sm font-medium dark:text-gray-300">CI/CD Systems</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
@@ -174,12 +183,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <input
                           type="checkbox"
                           id={`system-${system.name}`}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
                           defaultChecked={system.connected}
                         />
                         <label
                           htmlFor={`system-${system.name}`}
-                          className="ml-2 text-sm text-gray-700"
+                          className="ml-2 text-sm text-gray-700 dark:text-gray-300"
                         >
                           {system.name}
                         </label>
@@ -187,7 +196,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                       <span 
                         className={cn(
                           'text-xs px-1.5 py-0.5 rounded-full',
-                          system.connected ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                          system.connected ? 
+                            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 
+                            'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
                         )}
                       >
                         {system.connected ? 'Connected' : 'Disconnected'}
@@ -201,33 +212,31 @@ const Sidebar: React.FC<SidebarProps> = ({
             <AccordionItem value="settings" className="border-none">
               <AccordionTrigger className="py-2 hover:no-underline">
                 <div className="flex items-center">
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Settings</span>
+                  <Settings className="h-4 w-4 mr-2 dark:text-gray-300" />
+                  <span className="text-sm font-medium dark:text-gray-300">Settings</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2 pt-1 pb-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm text-gray-700">Auto Refresh</label>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-sm"
-                      defaultChecked
+                    <label className="text-sm text-gray-700 dark:text-gray-300">Auto Refresh</label>
+                    <Switch 
+                      checked={autoRefresh}
+                      onCheckedChange={setAutoRefresh}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="text-sm text-gray-700">Show Labels</label>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-sm"
-                      defaultChecked
+                    <label className="text-sm text-gray-700 dark:text-gray-300">Show Labels</label>
+                    <Switch
+                      checked={showLabels}
+                      onCheckedChange={setShowLabels}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <label className="text-sm text-gray-700">Dark Mode</label>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-sm"
+                    <label className="text-sm text-gray-700 dark:text-gray-300">Dark Mode</label>
+                    <Switch
+                      checked={darkMode}
+                      onCheckedChange={onToggleDarkMode}
                     />
                   </div>
                 </div>
@@ -238,29 +247,29 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
       
       {selectedNodeId && selectedNodeData && (
-        <div className="border-t border-gray-200 p-4 bg-white">
-          <h3 className="text-sm font-medium mb-2">Node Details</h3>
+        <div className="border-t border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-800">
+          <h3 className="text-sm font-medium mb-2 dark:text-gray-300">Node Details</h3>
           <div className="text-sm">
             <div className="flex justify-between mb-1">
-              <span className="text-gray-500">ID:</span>
-              <span className="font-mono">{selectedNodeId}</span>
+              <span className="text-gray-500 dark:text-gray-400">ID:</span>
+              <span className="font-mono dark:text-gray-300">{selectedNodeId}</span>
             </div>
             <div className="flex justify-between mb-1">
-              <span className="text-gray-500">Name:</span>
-              <span>{selectedNodeData.name}</span>
+              <span className="text-gray-500 dark:text-gray-400">Name:</span>
+              <span className="dark:text-gray-300">{selectedNodeData.name}</span>
             </div>
             <div className="flex justify-between mb-1">
-              <span className="text-gray-500">Type:</span>
-              <span className="capitalize">{selectedNodeData.type}</span>
+              <span className="text-gray-500 dark:text-gray-400">Type:</span>
+              <span className="capitalize dark:text-gray-300">{selectedNodeData.type}</span>
             </div>
             <div className="flex justify-between mb-1">
-              <span className="text-gray-500">Status:</span>
+              <span className="text-gray-500 dark:text-gray-400">Status:</span>
               <StatusBadge status={selectedNodeData.status} />
             </div>
             {selectedNodeData.duration && (
               <div className="flex justify-between mb-1">
-                <span className="text-gray-500">Duration:</span>
-                <span className="flex items-center">
+                <span className="text-gray-500 dark:text-gray-400">Duration:</span>
+                <span className="flex items-center dark:text-gray-300">
                   <Clock className="h-3 w-3 mr-1" />
                   {selectedNodeData.duration}s
                 </span>

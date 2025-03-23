@@ -97,7 +97,7 @@
 
 @layer utilities {
   .glassmorphism {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm;
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm dark:bg-gray-900/30 dark:border-gray-800/30;
   }
   
   .text-balance {
@@ -140,6 +140,15 @@
   }
 }
 
+/* Dark mode enhancements for the pipeline visualization */
+.dark .pipeline-edge {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.dark .pipeline-node:hover {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -157,4 +166,12 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }

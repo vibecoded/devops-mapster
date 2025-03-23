@@ -17,7 +17,7 @@ const isExtension = window.location.protocol === 'chrome-extension:' ||
 
 // Check for dark theme preference from extension storage if in extension context
 const getExtensionTheme = async () => {
-  if (typeof browser !== 'undefined' && browser.storage) {
+  if (isExtension && typeof browser !== 'undefined') {
     try {
       const data = await browser.storage.local.get('theme');
       return data.theme || 'light';

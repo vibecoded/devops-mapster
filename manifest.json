@@ -1,0 +1,38 @@
+
+{
+  "manifest_version": 2,
+  "name": "DevOps Pipeline Dependency Visualizer",
+  "version": "1.0.0",
+  "description": "Visualizes CI/CD pipeline dependencies across multiple systems",
+  "icons": {
+    "48": "public/icon-48.png",
+    "96": "public/icon-96.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "48": "public/icon-48.png"
+    },
+    "default_title": "DevOps Pipeline Visualizer",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": ["src/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://github.com/*",
+        "*://gitlab.com/*",
+        "*://jenkins.io/*",
+        "*://*.azure.com/*",
+        "*://circleci.com/*"
+      ],
+      "js": ["src/contentScript.js"]
+    }
+  ]
+}

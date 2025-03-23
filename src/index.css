@@ -93,6 +93,21 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+  
+  /* Extension-specific styles */
+  .extension-container {
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
+  }
+  
+  /* For the popup mode */
+  @media (max-width: 800px) {
+    .extension-container {
+      width: 100%;
+      height: 100vh;
+    }
+  }
 }
 
 @layer utilities {
